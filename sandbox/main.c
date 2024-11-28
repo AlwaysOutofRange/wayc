@@ -1,5 +1,6 @@
 #include "wayc/buffer.h"
 #include "wayc/core.h"
+#include "wayc/message.h"
 #include <stdio.h>
 
 int main() {
@@ -17,24 +18,21 @@ int main() {
 
   wayc_buffer_t *res = wayc_read(wayc);
 
-  uint32_t object_id = wayc_read_u32(res);
-  uint16_t opcode = wayc_read_u16(res);
-  uint16_t length = wayc_read_u16(res);
-  uint8_t *data = wayc_read_bytes(res, length - 8);
-  wayc_buffer_t *interface = wayc_buffer_from_bytes(data, length - 8);
-  uint32_t name = wayc_read_u32(interface);
-  char *name_str = wayc_read_string(interface);
-  uint32_t version = wayc_read_u32(interface);
-  wayc_buffer_free(res);
+  while (res->size > 8) {
+    wayc_message_t *message = wayc_message_from_bytes(res);
+    if (!message) {
+      break;
+    }
+    uint32_t name = wayc_read_u32(message->data);
+    char *value = wayc_read_string(message->data);
+    uint32_t version = wayc_read_u32(message->data);
 
-  printf("Object id: %u\n", object_id);
-  printf("Opcode: %u\n", opcode);
-  printf("Length: %u\n", length);
-  printf("Interface name: %u\n", name);
-  printf("Interface name: %s\n", name_str);
-  printf("Interface version: %u\n", version);
+    printf("Name: %d, Interface: %s, Version: %d\n", name, value, version);
+    wayc_message_free(message);
+  }
 
   wayc_disconnect(wayc);
+  wayc_buffer_free(res);
 
   return 0;
 }

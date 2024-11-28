@@ -4,6 +4,10 @@
 #include <string.h>
 
 wayc_buffer_t *wayc_buffer_create(size_t capacity) {
+  if (capacity == 0) {
+    capacity = 1024;
+  }
+
   wayc_buffer_t *buf = malloc(sizeof(wayc_buffer_t));
   buf->data = malloc(capacity);
   buf->size = 0;
