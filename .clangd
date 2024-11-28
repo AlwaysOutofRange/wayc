@@ -1,0 +1,35 @@
+CompileFlags:
+  Add: [-Wall, -Wextra, -Wpedantic, --std=c23]
+  Remove: [-W*, -std*]
+
+Diagnostics:
+  ClangTidy:
+    Add: [
+      modernize-*,
+      performance-*,
+      bugprone-*,
+      portability-*,
+      readability-*
+    ]
+    Remove: [
+      modernize-use-trailing-return-type,
+      readability-magic-numbers
+    ]
+    CheckOptions:
+      readability-identifier-length.MinimumVariableNameLength: 2
+      readability-identifier-length.MinimumParameterNameLength: 2
+
+Index:
+  Background: Build
+  StandardLibrary: Yes
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes
+
+Hover:
+  ShowAKA: Yes
+
+Style:
+  FullyQualifiedNamespaces: No
